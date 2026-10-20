@@ -1,46 +1,441 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-
-  <!-- Site Information -->
-  <meta charset="utf-8" />
-  <title>我的第一个github项目</title>
-  <meta name="description" content="Preview HTML, CSS, and JavaScript live in your browser in realtime." />
-  <meta name="keywords" content="editor, realtime editor, jsfiddle, codepen, stackoverflow, HTML, CSS, JavaScript" />
-  <meta property="og:title" content="Live Editor" />
-  <meta property="og:url" content="http://staticresource.com/editor" />
-  <meta property="og:description" content="Preview HTML, CSS, and JavaScript live in your browser in realtime." />
-
-  <!-- Cascading Style Sheets -->
-  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <link href="css/global.css" rel="stylesheet">
-
-  <!-- JavaScript -->
-  <script src="js/jquery.min.js" type="text/javascript"></script>
-  <script src="js/editor.js" type="text/javascript"></script>
-
-  <!-- Mobile Settings -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="format-detection" content="telephone=no">
-
-  <!-- Favicon and Thumbnails -->
-  <meta property="og:image" content="img/ico/thumb.png" />
-  <link rel="shortcut icon" type="image/png" href="img/ico/favicon.png">
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/ico/apple-touch-icon-144-precomposed.png">
-  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/ico/apple-touch-icon-114-precomposed.png">
-  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/ico/apple-touch-icon-72-precomposed.png">
-  <link rel="apple-touch-icon-precomposed" href="img/ico/apple-touch-icon-57-precomposed.png">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的健康打卡</title>
+<style>
+:root {
+  --green: #52785d;
+  --green-light: #eaf1e9;
+  --ink: #303b32;
+  --muted: #899087;
+  --paper: #f7f8f3;
+  --line: #e7e9e1;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Microsoft YaHei", sans-serif;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+.app {
+  width: min(100% - 28px, 760px);
+  margin: 0 auto;
+  padding: 28px 0 48px;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--green);
+  font-weight: 700;
+}
+h1 { font-size: 28px; margin: 8px 0; letter-spacing: -1px; }
+.subtitle { font-size: 13px; color: var(--muted); }
+.leaf {
+  width: 54px; height: 54px; border-radius: 50%;
+  background: var(--green-light);
+  display: grid; place-items: center; font-size: 26px;
+}
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 18px #273b2910;
+}
+.date-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+}
+.date-label { font-size: 13px; color: var(--muted); }
+.date-value { font-size: 19px; font-weight: 700; margin-top: 5px; }
+.date-controls { display: flex; gap: 7px; }
+.small-btn {
+  border: 1px solid var(--line); background: white;
+  border-radius: 10px; padding: 8px 12px; color: var(--ink);
+}
+.small-btn:disabled { opacity: .35; cursor: default; }
+.progress-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin: 22px 0 10px; font-size: 13px;
+}
+.progress-track {
+  height: 8px; border-radius: 20px; background: #edf0e9; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; width: 0; background: var(--green);
+  border-radius: 20px; transition: width .2s;
+}
+.stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+.stat {
+  background: var(--green-light); border-radius: 15px;
+  padding: 15px 10px; text-align: center;
+}
+.stat-number { font-size: 24px; font-weight: 750; color: var(--green); }
+.stat-label { font-size: 12px; color: #647568; margin-top: 5px; }
+.section-title {
+  font-size: 17px; font-weight: 750; margin: 0 0 5px;
+}
+.section-desc { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+.habit {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid #f0f1ec;
+}
+.habit:last-child { border-bottom: 0; padding-bottom: 0; }
+.check {
+  flex: 0 0 26px; width: 26px; height: 26px;
+  border: 1.5px solid #d6dcd2; border-radius: 9px;
+  display: grid; place-items: center; background: white;
+  color: white; font-size: 16px; padding: 0;
+}
+.check.done { background: var(--green); border-color: var(--green); }
+.habit-icon { font-size: 21px; }
+.habit-name { font-size: 14px; font-weight: 650; }
+.habit-tip { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.habit.finished .habit-name { color: #8b968b; text-decoration: line-through; }
+.field-label { display: block; font-size: 13px; font-weight: 650; margin: 16px 0 8px; }
+input, textarea {
+  width: 100%; border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px; background: #fcfcfa; color: var(--ink); outline: none;
+}
+input:focus, textarea:focus { border-color: #91ad94; }
+input[type="number"] { max-width: 180px; }
+textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
+.save-note { font-size: 11px; color: var(--muted); margin-top: 8px; }
+.history-item {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px; padding: 13px 0; border-bottom: 1px solid #f0f1ec;
+  font-size: 13px;
+}
+.history-item:last-child { border-bottom: 0; }
+.history-date { font-weight: 650; }
+.history-detail { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.history-right { text-align: right; white-space: nowrap; }
+.history-weight { font-weight: 700; }
+.empty { color: var(--muted); font-size: 13px; padding: 12px 0; }
+.footer { text-align: center; color: var(--muted); font-size: 11px; padding-top: 8px; }
+@media (max-width: 480px) {
+  .app { width: min(100% - 20px, 760px); padding-top: 20px; }
+  h1 { font-size: 25px; }
+  .card { padding: 16px; border-radius: 17px; }
+  .stat { padding: 13px 5px; }
+  .stat-number { font-size: 21px; }
+}
+</style>
 </head>
 <body>
-  <section>
-    <h1>Live Editor</h1><a class="clearLink" href="#" title="Click to clear all">clear</a>
-    <textarea id="html" value="" placeholder="HTML" autocapitalize="off" autofocus></textarea>
-    <textarea id="css" value="" placeholder="CSS" autocapitalize="off"></textarea>
-    <textarea id="js" value="" placeholder="JavaScript" autocapitalize="off"></textarea>
-    <iframe id="preview"></iframe>
+<main class="app">
+  <header class="top">
+    <div>
+      <div class="eyebrow">A LITTLE BETTER EVERY DAY</div>
+      <h1>我的健康打卡 🌿</h1>
+      <div class="subtitle">不求每天完美，只要一直向前。</div>
+    </div>
+    <div class="leaf">🌱</div>
+  </header>
+
+  <section class="card">
+    <div class="date-row">
+      <div>
+        <div class="date-label">今天也为自己做一点事</div>
+        <div class="date-value" id="dateText"></div>
+      </div>
+      <div class="date-controls">
+        <button class="small-btn" id="prevDay" aria-label="前一天">‹</button>
+        <button class="small-btn" id="todayBtn">今天</button>
+        <button class="small-btn" id="nextDay" aria-label="后一天">›</button>
+      </div>
+    </div>
+    <div class="progress-head">
+      <span>今日完成进度</span>
+      <strong id="progressText">0 / 4</strong>
+    </div>
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
   </section>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-number" id="streakStat">0</div>
+      <div class="stat-label">连续打卡 · 天</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number" id="totalStat">0</div>
+      <div class="stat-label">累计打卡 · 天</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number" id="weightStat">—</div>
+      <div class="stat-label">最近体重 · 斤</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">今日健康习惯</h2>
+    <div class="section-desc">完成一项，就给自己一个小小的肯定。</div>
+    <div id="habitsList"></div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">记录一下自己</h2>
+    <div class="section-desc">不需要每天都很努力，真实记录就很好。</div>
+    <label class="field-label" for="weightInput">今天的体重（斤，可不填）</label>
+    <input id="weightInput" type="number" min="0" max="500" step="0.1" placeholder="例如：138.5">
+    <label class="field-label" for="noteInput">今天的心得 / 备注</label>
+    <textarea id="noteInput" placeholder="今天吃得怎么样？有没有活动一下？有什么值得肯定的地方？"></textarea>
+    <div class="save-note" id="saveStatus">内容会自动保存在当前浏览器中。</div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">我的打卡记录</h2>
+    <div class="section-desc">回头看看，自己已经坚持了多少次。</div>
+    <div id="historyList"></div>
+  </section>
+
+  <div class="footer">慢慢来，比停在原地更重要 🌿</div>
+</main>
+
+<script>
+const HABITS = [
+  { id: "food", icon: "🥗", name: "认真吃好一日三餐", tip: "尽量规律饮食，留意零食和加餐" },
+  { id: "move", icon: "🚶", name: "活动身体 10 分钟", tip: "散步、拉伸或做一点家务都算" },
+  { id: "water", icon: "💧", name: "记得喝水", tip: "分几次喝，不必一次喝很多" },
+  { id: "pause", icon: "🌿", name: "给自己一点放松时间", tip: "深呼吸、休息一下，或者写几句话" }
+];
+
+const STORAGE_KEY = "my-health-checkin-v1";
+let records = {};
+let selectedDate = dateKey(new Date());
+
+try {
+  records = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {};
+} catch (e) {
+  records = {};
+}
+
+function dateKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function getRecord(key) {
+  if (!records[key]) records[key] = { checks: {}, weight: "", note: "" };
+  return records[key];
+}
+
+function saveRecords() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    document.getElementById("saveStatus").textContent =
+      "✓ 已自动保存到当前浏览器";
+  } catch (e) {
+    document.getElementById("saveStatus").textContent =
+      "保存失败：请检查浏览器是否允许保存网站数据。";
+  }
+}
+
+function displayDate(key) {
+  const date = new Date(key + "T12:00:00");
+  const weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}`;
+}
+
+function renderHabits() {
+  const record = getRecord(selectedDate);
+  const container = document.getElementById("habitsList");
+  container.innerHTML = "";
+
+  HABITS.forEach(habit => {
+    const done = !!record.checks[habit.id];
+    const row = document.createElement("div");
+    row.className = "habit" + (done ? " finished" : "");
+
+    const button = document.createElement("button");
+    button.className = "check" + (done ? " done" : "");
+    button.textContent = done ? "✓" : "";
+    button.setAttribute("aria-label", done ? "取消打卡" : "完成打卡");
+    button.addEventListener("click", () => {
+      const current = getRecord(selectedDate);
+      current.checks[habit.id] = !current.checks[habit.id];
+      saveRecords();
+      render();
+    });
+
+    const icon = document.createElement("span");
+    icon.className = "habit-icon";
+    icon.textContent = habit.icon;
+
+    const textBox = document.createElement("div");
+    textBox.style.flex = "1";
+    const name = document.createElement("div");
+    name.className = "habit-name";
+    name.textContent = habit.name;
+    const tip = document.createElement("div");
+    tip.className = "habit-tip";
+    tip.textContent = habit.tip;
+    textBox.append(name, tip);
+
+    row.append(button, icon, textBox);
+    container.appendChild(row);
+  });
+}
+
+function completedCount(key) {
+  const record = records[key];
+  if (!record || !record.checks) return 0;
+  return HABITS.filter(h => record.checks[h.id]).length;
+}
+
+function streakCount() {
+  let cursor = new Date();
+  const today = dateKey(cursor);
+  if (completedCount(today) === 0) cursor.setDate(cursor.getDate() - 1);
+
+  let count = 0;
+  for (let i = 0; i < 3660; i++) {
+    if (completedCount(dateKey(cursor)) === 0) break;
+    count++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return count;
+}
+
+function renderStats() {
+  const days = Object.keys(records).filter(key => completedCount(key) > 0);
+  document.getElementById("streakStat").textContent = streakCount();
+  document.getElementById("totalStat").textContent = days.length;
+
+  const weightedDays = Object.keys(records)
+    .filter(key => records[key].weight !== "" && Number(records[key].weight) > 0)
+    .sort()
+    .reverse();
+
+  document.getElementById("weightStat").textContent = weightedDays.length
+    ? Number(records[weightedDays[0]].weight).toString()
+    : "—";
+}
+
+function renderHistory() {
+  const container = document.getElementById("historyList");
+  container.innerHTML = "";
+  const keys = Object.keys(records)
+    .filter(key => completedCount(key) > 0 ||
+      (records[key].weight !== "" && records[key].weight !== undefined) ||
+      (records[key].note || "").trim() !== "")
+    .sort()
+    .reverse()
+    .slice(0, 14);
+
+  if (keys.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "还没有记录。完成第一次打卡后，这里就会出现你的历史。";
+    container.appendChild(empty);
+    return;
+  }
+
+  keys.forEach(key => {
+    const record = records[key];
+    const row = document.createElement("div");
+    row.className = "history-item";
+    const left = document.createElement("div");
+    const date = document.createElement("div");
+    date.className = "history-date";
+    date.textContent = key === dateKey(new Date()) ? "今天" : key;
+    const detail = document.createElement("div");
+    detail.className = "history-detail";
+    const note = (record.note || "").trim();
+    detail.textContent = note ? note.slice(0, 32) + (note.length > 32 ? "…" : "") : "继续加油";
+    left.append(date, detail);
+
+    const right = document.createElement("div");
+    right.className = "history-right";
+    const progress = document.createElement("div");
+    progress.textContent = `${completedCount(key)} / ${HABITS.length} 项`;
+    const weight = document.createElement("div");
+    weight.className = "history-weight";
+    weight.textContent = record.weight ? `${record.weight} 斤` : "";
+    right.append(progress, weight);
+
+    row.append(left, right);
+    row.style.cursor = "pointer";
+    row.title = "点击查看或修改这一天";
+    row.addEventListener("click", () => {
+      selectedDate = key;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    container.appendChild(row);
+  });
+}
+
+function render() {
+  document.getElementById("dateText").textContent = displayDate(selectedDate);
+  document.getElementById("prevDay").disabled = selectedDate <= "2000-01-01";
+  document.getElementById("nextDay").disabled = selectedDate >= dateKey(new Date());
+
+  const record = getRecord(selectedDate);
+  document.getElementById("weightInput").value = record.weight || "";
+  document.getElementById("noteInput").value = record.note || "";
+
+  const count = completedCount(selectedDate);
+  document.getElementById("progressText").textContent = `${count} / ${HABITS.length}`;
+  document.getElementById("progressBar").style.width = `${count / HABITS.length * 100}%`;
+
+  renderHabits();
+  renderStats();
+  renderHistory();
+}
+
+document.getElementById("prevDay").addEventListener("click", () => {
+  const date = new Date(selectedDate + "T12:00:00");
+  date.setDate(date.getDate() - 1);
+  selectedDate = dateKey(date);
+  render();
+});
+
+document.getElementById("nextDay").addEventListener("click", () => {
+  const date = new Date(selectedDate + "T12:00:00");
+  date.setDate(date.getDate() + 1);
+  if (dateKey(date) <= dateKey(new Date())) selectedDate = dateKey(date);
+  render();
+});
+
+document.getElementById("todayBtn").addEventListener("click", () => {
+  selectedDate = dateKey(new Date());
+  render();
+});
+
+document.getElementById("weightInput").addEventListener("input", event => {
+  getRecord(selectedDate).weight = event.target.value;
+  saveRecords();
+  renderStats();
+  renderHistory();
+});
+
+document.getElementById("noteInput").addEventListener("input", event => {
+  getRecord(selectedDate).note = event.target.value;
+  saveRecords();
+  renderHistory();
+});
+
+render();
+</script>
 </body>
 </html>
